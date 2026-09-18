@@ -12,20 +12,26 @@ export default function AskLoopPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleAsk(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setAnswer("");
-    setLoading(true);
+ async function handleAsk(e: React.FormEvent) {
+  e.preventDefault();
+  setError("");
+  setAnswer("");
+  setLoading(true);
 
+  try {
     const res = await fetch("/api/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question }),
     });
 
-    const data = await res.json();
-    setLoading(false);
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      setError("Server took too long to respond. Try again.");
+      return;
+    }
 
     if (!res.ok) {
       setError(data.error || "Something went wrong");
@@ -33,7 +39,13 @@ export default function AskLoopPage() {
     }
 
     setAnswer(data.answer);
+  } catch (err) {
+    console.error(err);
+    setError("Request failed. Please try again.");
+  } finally {
+    setLoading(false);
   }
+}
 
   if (status === "unauthenticated") {
     router.push("/login");
