@@ -41,7 +41,7 @@ Question: ${question}
 
 Give a concise, helpful answer grounded only in the feedback above.`;
 
-  const model = genAI.getGenerativeModel({ model: "gemini-3.7-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
   const result = await model.generateContent(prompt);
   const answer = result.response.text();
 
